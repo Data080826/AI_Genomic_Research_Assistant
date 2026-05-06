@@ -49,7 +49,7 @@ with st.sidebar:
         help="Your API key is never stored"
     )
 
-   st.markdown(
+st.markdown(
     "[Get your API key from OpenAI Platform](https://platform.openai.com/api-keys)"
 )
 
