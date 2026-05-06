@@ -50,8 +50,8 @@ with st.sidebar:
     )
 
    st.markdown(
-    '[Get your API key from OpenAI Platform](https://platform.openai.com/api-keys)'
-    )
+    "[Get your API key from OpenAI Platform](https://platform.openai.com/api-keys)"
+)
 
     st.write("---")
 
