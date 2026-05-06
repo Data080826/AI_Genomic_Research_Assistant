@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 from Bio import SeqIO
 from openai import OpenAI
-import io
 
 # -----------------------------------
 # PAGE CONFIG
@@ -39,29 +38,48 @@ with st.sidebar:
 
     st.title("GenomeGPT Settings")
 
+    # -----------------------------------
     # USER API KEY
+    # -----------------------------------
+
     user_api_key = st.text_input(
         "Enter Your OpenAI API Key",
         type="password",
+        placeholder="sk-...",
         help="Your API key is never stored."
+    )
+
+    st.info(
+        "Enter your OpenAI API key above.\n\n"
+        "Get a key here:\n"
+        "https://platform.openai.com/account/api-keys"
     )
 
     st.write("---")
 
+    # -----------------------------------
     # ADMIN LOGIN
+    # -----------------------------------
+
     admin_password = st.text_input(
         "Admin Password",
         type="password"
     )
 
+    # -----------------------------------
     # ADMIN AUTH
+    # -----------------------------------
+
     if admin_password == st.secrets["ADMIN_PASSWORD"]:
         st.session_state.admin_authenticated = True
 
+    # -----------------------------------
     # ADMIN PANEL
+    # -----------------------------------
+
     if st.session_state.admin_authenticated:
 
-        st.success("Admin Access Enabled")
+        st.success("✅ Admin Access Enabled")
 
         st.session_state.demo_mode = st.toggle(
             "Demo Mode",
@@ -72,15 +90,19 @@ with st.sidebar:
 
         st.write("### Admin Controls")
 
-        if st.button("Enable Demo Mode"):
-            st.session_state.demo_mode = True
+        col1, col2 = st.columns(2)
 
-        if st.button("Enable Real AI"):
-            st.session_state.demo_mode = False
+        with col1:
+            if st.button("Demo Mode"):
+                st.session_state.demo_mode = True
+
+        with col2:
+            if st.button("Real AI"):
+                st.session_state.demo_mode = False
 
     else:
 
-        st.info("Public Demo Version")
+        st.info("🌐 Public Demo Version")
 
 # -----------------------------------
 # OPENAI CLIENT
@@ -137,6 +159,10 @@ if uploaded_file:
 
     try:
 
+        # -----------------------------------
+        # CSV FILES
+        # -----------------------------------
+
         if uploaded_file.name.endswith(".csv"):
 
             df = pd.read_csv(uploaded_file)
@@ -144,7 +170,24 @@ if uploaded_file:
             st.write("### Dataset Preview")
             st.dataframe(df.head())
 
+            st.write("### Dataset Statistics")
+
+            col1, col2 = st.columns(2)
+
+            with col1:
+                st.metric("Rows", df.shape[0])
+
+            with col2:
+                st.metric("Columns", df.shape[1])
+
+            st.write("### Columns")
+            st.write(df.columns.tolist())
+
             file_content = df.head(25).to_string()
+
+        # -----------------------------------
+        # FASTA FILES
+        # -----------------------------------
 
         elif uploaded_file.name.endswith((".fasta", ".fa")):
 
@@ -158,9 +201,15 @@ if uploaded_file:
 
                 first_seq = str(sequences[0].seq)
 
+                st.write("### First Sequence Preview")
+
                 st.code(first_seq[:1000])
 
                 file_content = first_seq[:5000]
+
+        # -----------------------------------
+        # TXT / VCF FILES
+        # -----------------------------------
 
         else:
 
@@ -168,6 +217,8 @@ if uploaded_file:
                 "utf-8",
                 errors="ignore"
             )
+
+            st.write("### File Preview")
 
             st.code(content[:1500])
 
@@ -178,24 +229,37 @@ if uploaded_file:
         st.error(f"Error reading file: {e}")
 
 # -----------------------------------
-
 # CHAT SECTION
-
 # -----------------------------------
 
 st.divider()
 
 st.write("## Ask GenomeGPT")
 
-example_questions = ["What mutations are present?","Summarize this genome dataset","Are there disease-associated variants?","Explain this genomic data simply","Which genes appear most important?","Identify clinically relevant SNPs"]
+example_questions = [
+    "What mutations are present?",
+    "Summarize this genome dataset",
+    "Are there disease-associated variants?",
+    "Explain this genomic data simply",
+    "Which genes appear most important?",
+    "Identify clinically relevant SNPs"
+]
 
-selected_question = st.selectbox("Example Questions",[""] + example_questions)
+selected_question = st.selectbox(
+    "Example Questions",
+    [""] + example_questions
+)
 
-user_question = st.chat_input("Ask about your genomic data...")
+user_question = st.chat_input(
+    "Ask about your genomic data..."
+)
 
+# -----------------------------------
 # USE EXAMPLE QUESTION
+# -----------------------------------
 
-if not user_question and selected_question:user_question = selected_question
+if not user_question and selected_question:
+    user_question = selected_question
 
 # -----------------------------------
 # AI RESPONSE
@@ -205,37 +269,51 @@ if user_question:
 
     st.chat_message("user").write(user_question)
 
+    # -----------------------------------
     # DEMO MODE
+    # -----------------------------------
+
     if st.session_state.demo_mode:
 
         demo_response = f"""
 🧬 GenomeGPT Demo Analysis
+
+Analysis completed successfully.
 
 Potential genes identified:
 • APOE
 • FCGR2A
 • BRCA1
 
+Possible findings:
+• Immune-response related variants detected
+• Lipid metabolism markers observed
+• SNP-style genomic variations identified
+
 Question analyzed:
 "{user_question}"
 
-This is a simulated demo response.
+⚠️ This response is generated in demo mode and does not represent medical advice.
         """
 
         st.chat_message("assistant").write(
             demo_response
         )
 
+    # -----------------------------------
     # REAL AI MODE
+    # -----------------------------------
+
     else:
 
-        # REQUIRE USER API KEY
+        # REQUIRE API KEY
         if not user_api_key:
 
             st.warning(
                 "Please enter your OpenAI API key in the sidebar."
             )
 
+        # REQUIRE FILE
         elif not uploaded_file:
 
             st.warning(
@@ -253,12 +331,20 @@ Analyze this genomic dataset:
 
 User Question:
 {user_question}
+
+Instructions:
+- Be beginner friendly
+- Explain genomic concepts clearly
+- Mention possible genes and variants
+- Avoid medical diagnosis
+- Use bullet points when helpful
+- Keep formatting clean
             """
 
             try:
 
                 with st.spinner(
-                    "Analyzing genomic dataset..."
+                    "🔬 Analyzing genomic dataset..."
                 ):
 
                     response = client.chat.completions.create(
