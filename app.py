@@ -64,13 +64,33 @@ if uploaded_file:
         "Ask questions about your genome data..."
     )
 
-    if user_question:
+ if user_question:
 
-        st.chat_message("user").write(user_question)
+    st.chat_message("user").write(user_question)
 
-        prompt = f"""
-        You are a genomics AI assistant.
+    prompt = f"""
+    You are a genomics AI assistant.
 
-        User question:
-        {user_question}
-        st.chat_message("assistant").write(ai_response)
+    User question:
+    {user_question}
+
+    Provide a clear and beginner-friendly explanation.
+    """
+
+    response = client.chat.completions.create(
+        model="gpt-4.1-mini",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are an expert genomic data assistant."
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ]
+    )
+
+    ai_response = response.choices[0].message.content
+
+    st.chat_message("assistant").write(ai_response)
