@@ -54,17 +54,17 @@ if uploaded_file:
             st.write("### First Sequence")
             st.code(str(sequences[0].seq[:500]))
 
-    # -------------------------------
-    # CHATBOT SECTION
-    # -------------------------------
+   # -------------------------------
+# CHATBOT SECTION
+# -------------------------------
 
-    st.divider()
+st.divider()
 
-    user_question = st.chat_input(
-        "Ask questions about your genome data..."
-    )
+user_question = st.chat_input(
+    "Ask questions about your genome data..."
+)
 
- if user_question:
+if user_question:
 
     st.chat_message("user").write(user_question)
 
