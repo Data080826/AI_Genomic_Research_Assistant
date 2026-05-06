@@ -43,7 +43,7 @@ with st.sidebar:
     # -----------------------------------
 
     user_api_key = st.text_input(
-        "Enter your OpenAI API key \nto enable Real AI responses",
+        "Enter your OpenAI API key\nto enable Real AI responses",
         type="password",
         placeholder="sk-...",
         help="Your API key is never stored"
