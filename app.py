@@ -43,15 +43,15 @@ with st.sidebar:
     # -----------------------------------
 
     user_api_key = st.text_input(
-        "Get your API key to enable real AI responses",
+        "Enter your OpenAI API key",
         type="password",
         placeholder="sk-...",
         help="Your API key is never stored"
     )
 
-st.markdown(
-    "[Get your API key from OpenAI Platform](https://platform.openai.com/api-keys)"
-)
+    st.markdown(
+        "[Get your API key from OpenAI Platform](https://platform.openai.com/api-keys)"
+    )
 
     st.write("---")
 
@@ -65,7 +65,10 @@ st.markdown(
         placeholder="Hidden"
     )
 
-    # Admin authentication
+    # -----------------------------------
+    # ADMIN AUTH
+    # -----------------------------------
+
     if (
         admin_access
         and admin_access == st.secrets["ADMIN_PASSWORD"]
@@ -104,7 +107,6 @@ st.markdown(
         if st.button("Logout Admin"):
 
             st.session_state.admin_authenticated = False
-
             st.rerun()
 
     else:
