@@ -15,14 +15,6 @@ st.set_page_config(
 )
 
 # -----------------------------------
-# OPENAI CLIENT
-# -----------------------------------
-
-client = OpenAI(
-    api_key=st.secrets["OPENAI_API_KEY"]
-)
-
-# -----------------------------------
 # SESSION STATE
 # -----------------------------------
 
@@ -47,6 +39,16 @@ with st.sidebar:
 
     st.title("GenomeGPT Settings")
 
+    # USER API KEY
+    user_api_key = st.text_input(
+        "Enter Your OpenAI API Key",
+        type="password",
+        help="Your API key is never stored."
+    )
+
+    st.write("---")
+
+    # ADMIN LOGIN
     admin_password = st.text_input(
         "Admin Password",
         type="password"
@@ -56,7 +58,7 @@ with st.sidebar:
     if admin_password == st.secrets["ADMIN_PASSWORD"]:
         st.session_state.admin_authenticated = True
 
-    # ONLY SHOW ADMIN PANEL TO YOU
+    # ADMIN PANEL
     if st.session_state.admin_authenticated:
 
         st.success("Admin Access Enabled")
@@ -81,13 +83,31 @@ with st.sidebar:
         st.info("Public Demo Version")
 
 # -----------------------------------
+# OPENAI CLIENT
+# -----------------------------------
+
+client = None
+
+if user_api_key:
+
+    try:
+
+        client = OpenAI(
+            api_key=user_api_key
+        )
+
+    except Exception as e:
+
+        st.error(f"Invalid API Key: {e}")
+
+# -----------------------------------
 # STATUS
 # -----------------------------------
 
 if st.session_state.demo_mode:
 
     st.info(
-        "🧪 Demo Mode Active • AI responses are simulated to reduce API usage."
+        "🧪 Demo Mode Active • AI responses are simulated."
     )
 
 else:
@@ -117,7 +137,6 @@ if uploaded_file:
 
     try:
 
-        # CSV FILES
         if uploaded_file.name.endswith(".csv"):
 
             df = pd.read_csv(uploaded_file)
@@ -125,22 +144,8 @@ if uploaded_file:
             st.write("### Dataset Preview")
             st.dataframe(df.head())
 
-            st.write("### Dataset Information")
-
-            col1, col2 = st.columns(2)
-
-            with col1:
-                st.metric("Rows", df.shape[0])
-
-            with col2:
-                st.metric("Columns", df.shape[1])
-
-            st.write("### Columns")
-            st.write(df.columns.tolist())
-
             file_content = df.head(25).to_string()
 
-        # FASTA FILES
         elif uploaded_file.name.endswith((".fasta", ".fa")):
 
             sequences = list(
@@ -153,21 +158,16 @@ if uploaded_file:
 
                 first_seq = str(sequences[0].seq)
 
-                st.write("### First Sequence")
-
                 st.code(first_seq[:1000])
 
                 file_content = first_seq[:5000]
 
-        # TXT / VCF
         else:
 
             content = uploaded_file.read().decode(
                 "utf-8",
                 errors="ignore"
             )
-
-            st.write("### File Preview")
 
             st.code(content[:1500])
 
@@ -185,27 +185,9 @@ st.divider()
 
 st.write("## Ask GenomeGPT")
 
-example_questions = [
-    "What mutations are present?",
-    "Summarize this genome dataset",
-    "Are there disease-associated variants?",
-    "Explain this genomic data simply",
-    "Which genes appear most important?",
-    "Identify clinically relevant SNPs"
-]
-
-selected_question = st.selectbox(
-    "Example Questions",
-    [""] + example_questions
-)
-
 user_question = st.chat_input(
     "Ask about your genomic data..."
 )
-
-# USE EXAMPLE QUESTION
-if not user_question and selected_question:
-    user_question = selected_question
 
 # -----------------------------------
 # AI RESPONSE
@@ -215,44 +197,38 @@ if user_question:
 
     st.chat_message("user").write(user_question)
 
-    # -----------------------------------
     # DEMO MODE
-    # -----------------------------------
-
     if st.session_state.demo_mode:
 
         demo_response = f"""
 🧬 GenomeGPT Demo Analysis
-
-Analysis completed successfully.
 
 Potential genes identified:
 • APOE
 • FCGR2A
 • BRCA1
 
-Possible findings:
-• Immune response related variants detected
-• Lipid metabolism associated markers observed
-• Several SNP-style genomic variations identified
-
 Question analyzed:
 "{user_question}"
 
-This response is generated in demo mode and does not represent real medical interpretation.
+This is a simulated demo response.
         """
 
         st.chat_message("assistant").write(
             demo_response
         )
 
-    # -----------------------------------
     # REAL AI MODE
-    # -----------------------------------
-
     else:
 
-        if not uploaded_file:
+        # REQUIRE USER API KEY
+        if not user_api_key:
+
+            st.warning(
+                "Please enter your OpenAI API key in the sidebar."
+            )
+
+        elif not uploaded_file:
 
             st.warning(
                 "Please upload a genomic dataset first."
@@ -269,14 +245,6 @@ Analyze this genomic dataset:
 
 User Question:
 {user_question}
-
-Instructions:
-- Be beginner friendly
-- Explain genomic concepts clearly
-- Mention possible genes and variants
-- Avoid making medical diagnoses
-- Keep formatting clean
-- Use bullet points when helpful
             """
 
             try:
@@ -291,8 +259,7 @@ Instructions:
                             {
                                 "role": "system",
                                 "content": (
-                                    "You are an expert genomics "
-                                    "AI assistant."
+                                    "You are an expert genomics AI assistant."
                                 )
                             },
                             {
