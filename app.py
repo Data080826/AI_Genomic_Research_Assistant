@@ -2,30 +2,60 @@ import streamlit as st
 import pandas as pd
 from Bio import SeqIO
 from openai import OpenAI
-import os
+import io
 
-client = OpenAI(
-    api_key=st.secrets["OPENAI_API_KEY"]
+# -------------------------------
+# PAGE CONFIG
+# -------------------------------
+
+st.set_page_config(
+    page_title="GenomeGPT",
+    layout="wide"
 )
-
-st.set_page_config(page_title="GenomeGPT", layout="wide")
 
 st.title("🧬 GenomeGPT")
 st.subheader("AI-Powered Genomic Research Assistant")
 
-uploaded_file = st.file_uploader(
-    "Upload a genome dataset",
-    type=["csv", "fasta", "fa", "txt"]
+st.info(
+    "Demo Version • Uses sample AI responses to avoid excessive API usage."
 )
 
 # -------------------------------
-# CSV HANDLING
+# SIDEBAR
+# -------------------------------
+
+st.sidebar.title("Settings")
+
+demo_mode = st.sidebar.toggle(
+    "Demo Mode",
+    value=True
+)
+
+# Optional real AI mode
+if not demo_mode:
+
+    api_key = st.secrets["OPENAI_API_KEY"]
+
+    client = OpenAI(api_key=api_key)
+
+# -------------------------------
+# FILE UPLOAD
+# -------------------------------
+
+uploaded_file = st.file_uploader(
+    "Upload a genome dataset",
+    type=["csv", "fasta", "fa", "txt", "vcf"]
+)
+
+# -------------------------------
+# FILE PREVIEW
 # -------------------------------
 
 if uploaded_file:
 
     st.success("File uploaded successfully")
 
+    # CSV
     if uploaded_file.name.endswith(".csv"):
 
         df = pd.read_csv(uploaded_file)
@@ -39,79 +69,177 @@ if uploaded_file:
         st.write("### Columns")
         st.write(df.columns.tolist())
 
-    # -------------------------------
-    # FASTA HANDLING
-    # -------------------------------
-
+    # FASTA
     elif uploaded_file.name.endswith((".fasta", ".fa")):
 
-        sequences = list(SeqIO.parse(uploaded_file, "fasta"))
+        sequences = list(
+            SeqIO.parse(uploaded_file, "fasta")
+        )
 
         st.write(f"Total sequences: {len(sequences)}")
 
         if sequences:
+
             st.write("### First Sequence")
-            st.code(str(sequences[0].seq[:500]))
+
+            st.code(
+                str(sequences[0].seq[:500])
+            )
+
+    # TXT / VCF
+    else:
+
+        content = uploaded_file.read().decode("utf-8")
+
+        st.write("### File Preview")
+
+        st.code(content[:1000])
+
 # -------------------------------
-# CHATBOT SECTION
+# CHAT SECTION
 # -------------------------------
 
 st.divider()
+
+st.write("### Ask GenomeGPT")
+
+example_questions = [
+    "What mutations are present?",
+    "Summarize this genome dataset",
+    "Are there disease-associated variants?",
+    "Explain this genomic data simply"
+]
+
+selected_question = st.selectbox(
+    "Try an example question",
+    [""] + example_questions
+)
 
 user_question = st.chat_input(
     "Ask questions about your genome data..."
 )
 
+# Use selected example if chat empty
+if not user_question and selected_question:
+    user_question = selected_question
+
+# -------------------------------
+# AI RESPONSE
+# -------------------------------
+
 if user_question:
 
     st.chat_message("user").write(user_question)
 
-    file_content = ""
+    # -------------------------------
+    # DEMO MODE RESPONSES
+    # -------------------------------
 
-    # READ CSV
-    if uploaded_file.name.endswith(".csv"):
+    if demo_mode:
 
-        uploaded_file.seek(0)
+        demo_response = """
+🧬 Demo Analysis Complete
 
-        file_content = pd.read_csv(
-            uploaded_file
-        ).to_string()
+GenomeGPT identified several example genomic variants
+commonly associated with immune response and lipid metabolism.
 
-    # READ FASTA / TXT / VCF
+Possible genes detected:
+• APOE
+• FCGR2A
+
+Example insights:
+• APOE variants may influence cholesterol processing
+• FCGR2A is involved in immune system signaling
+
+This is a simulated AI-generated response for demonstration purposes.
+        """
+
+        st.chat_message("assistant").write(
+            demo_response
+        )
+
+    # -------------------------------
+    # REAL AI MODE
+    # -------------------------------
+
     else:
 
-        uploaded_file.seek(0)
+        if uploaded_file is None:
 
-        file_content = uploaded_file.read().decode("utf-8")
+            st.warning(
+                "Please upload a genome dataset first."
+            )
 
-    prompt = f"""
-    You are a genomics AI assistant.
+        else:
 
-    Here is the uploaded genome dataset:
+            file_content = ""
 
-    {file_content}
+            # CSV
+            if uploaded_file.name.endswith(".csv"):
 
-    User question:
-    {user_question}
+                uploaded_file.seek(0)
 
-    Analyze the genomic data and provide
-    a clear beginner-friendly explanation.
-    """
+                df = pd.read_csv(uploaded_file)
 
-    response = client.chat.completions.create(
-        model="gpt-4.1-mini",
-        messages=[
-            {
-                "role": "system",
-                "content": "You are an expert genomic data assistant."
-            },
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ]
-    )
+                # limit size
+                file_content = df.head(20).to_string()
 
-    ai_response = response.choices[0].message.content
+            # OTHER FILES
+            else:
 
-    st.chat_message("assistant").write(ai_response)
+                uploaded_file.seek(0)
+
+                file_content = uploaded_file.read().decode(
+                    "utf-8"
+                )[:5000]
+
+            prompt = f"""
+You are a genomics AI assistant.
+
+Here is the uploaded genome dataset:
+
+{file_content}
+
+User question:
+{user_question}
+
+Provide a beginner-friendly explanation.
+            """
+
+            with st.spinner("Analyzing genomic data..."):
+
+                response = client.chat.completions.create(
+                    model="gpt-4.1-mini",
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": (
+                                "You are an expert genomic "
+                                "research assistant."
+                            )
+                        },
+                        {
+                            "role": "user",
+                            "content": prompt
+                        }
+                    ]
+                )
+
+                ai_response = (
+                    response.choices[0]
+                    .message.content
+                )
+
+                st.chat_message("assistant").write(
+                    ai_response
+                )
+
+# -------------------------------
+# FOOTER
+# -------------------------------
+
+st.divider()
+
+st.caption(
+    "GenomeGPT • Educational demo project for genomic AI analysis"
+)
