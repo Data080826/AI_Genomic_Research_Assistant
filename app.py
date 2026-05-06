@@ -36,7 +36,7 @@ admin_password = st.sidebar.text_input(
 )
 
 # Only YOU know this password
-if admin_password == st.secrets["DNK26"]:
+if admin_password == st.secrets["ADMIN_PASSWORD"]:
 
     st.sidebar.success("Admin Access Enabled")
 
