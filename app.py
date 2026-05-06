@@ -193,7 +193,7 @@ selected_question = st.selectbox("Example Questions",[""] + example_questions)
 
 user_question = st.chat_input("Ask about your genomic data...")
 
-USE EXAMPLE QUESTION
+# USE EXAMPLE QUESTION
 
 if not user_question and selected_question:user_question = selected_question
 
