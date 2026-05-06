@@ -52,8 +52,7 @@ if uploaded_file:
         if sequences:
             st.write("### First Sequence")
             st.code(str(sequences[0].seq[:500]))
-
-   # -------------------------------
+# -------------------------------
 # CHATBOT SECTION
 # -------------------------------
 
@@ -67,13 +66,36 @@ if user_question:
 
     st.chat_message("user").write(user_question)
 
+    file_content = ""
+
+    # READ CSV
+    if uploaded_file.name.endswith(".csv"):
+
+        uploaded_file.seek(0)
+
+        file_content = pd.read_csv(
+            uploaded_file
+        ).to_string()
+
+    # READ FASTA / TXT / VCF
+    else:
+
+        uploaded_file.seek(0)
+
+        file_content = uploaded_file.read().decode("utf-8")
+
     prompt = f"""
     You are a genomics AI assistant.
+
+    Here is the uploaded genome dataset:
+
+    {file_content}
 
     User question:
     {user_question}
 
-    Provide a clear and beginner-friendly explanation.
+    Analyze the genomic data and provide
+    a clear beginner-friendly explanation.
     """
 
     response = client.chat.completions.create(
