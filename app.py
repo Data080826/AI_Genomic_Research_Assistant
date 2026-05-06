@@ -36,7 +36,7 @@ st.subheader("AI-Powered Genomic Research Assistant")
 
 with st.sidebar:
 
-    st.title("GenomeGPT Settings")
+    st.title("GenomeGPT")
 
     # -----------------------------------
     # USER API KEY
@@ -49,60 +49,67 @@ with st.sidebar:
         help="Your API key is never stored."
     )
 
-    st.info(
-        
-        "Get a key here:\n"
-        "https://platform.openai.com/account/api-keys"
+    st.caption(
+        "Get your API key from OpenAI Platform"
     )
 
     st.write("---")
 
     # -----------------------------------
-    # ADMIN LOGIN
+    # HIDDEN ADMIN ACCESS
     # -----------------------------------
 
-    admin_password = st.text_input(
-        "Admin Password",
-        type="password"
+    admin_access = st.text_input(
+        "Admin Access",
+        type="password",
+        placeholder="Hidden"
     )
 
-    # -----------------------------------
-    # ADMIN AUTH
-    # -----------------------------------
-
-    if admin_password == st.secrets["ADMIN_PASSWORD"]:
+    # Admin authentication
+    if (
+        admin_access
+        and admin_access == st.secrets["ADMIN_PASSWORD"]
+    ):
         st.session_state.admin_authenticated = True
 
     # -----------------------------------
-    # ADMIN PANEL
+    # ADMIN CONTROLS
     # -----------------------------------
 
     if st.session_state.admin_authenticated:
 
-        st.success("✅ Admin Access Enabled")
+        st.success("✅ Admin Mode Enabled")
+
+        st.write("### AI Controls")
 
         st.session_state.demo_mode = st.toggle(
             "Demo Mode",
             value=st.session_state.demo_mode
         )
 
-        st.write("---")
-
-        st.write("### Admin Controls")
-
         col1, col2 = st.columns(2)
 
         with col1:
-            if st.button("Demo Mode"):
+
+            if st.button("Use Demo"):
                 st.session_state.demo_mode = True
 
         with col2:
-            if st.button("Real AI"):
+
+            if st.button("Use Real AI"):
                 st.session_state.demo_mode = False
+
+        st.write("---")
+
+        if st.button("Logout Admin"):
+
+            st.session_state.admin_authenticated = False
+
+            st.rerun()
 
     else:
 
-        st.info("🌐 Public Demo Version")
+        st.caption("🌐 Public Research Demo")
 
 # -----------------------------------
 # OPENAI CLIENT
