@@ -3,4 +3,4 @@ pandas
 openai
 biopython
 plotly
-python-dotenv
+
