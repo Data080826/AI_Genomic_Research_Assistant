@@ -42,12 +42,17 @@ with st.sidebar:
     # USER API KEY
     # -----------------------------------
 
-    user_api_key = st.text_input(
-      "Enter your OpenAI API key\nTo enable Real AI responses",
-        type="password",
-        placeholder="sk-...",
-        help="Your API key is never stored"
-    )
+st.markdown("""
+Enter your OpenAI API key  
+To enable Real AI responses
+""")
+
+user_api_key = st.text_input(
+    "",
+    type="password",
+    placeholder="sk-...",
+    help="Your API key is never stored"
+)
 
     st.markdown(
         "[Get your API key from OpenAI Platform](https://platform.openai.com/api-keys)"
