@@ -177,17 +177,25 @@ if uploaded_file:
 
         st.error(f"Error reading file: {e}")
 
-# -----------------------------------
-# CHAT SECTION
-# -----------------------------------
+-----------------------------------
+
+CHAT SECTION
+
+-----------------------------------
 
 st.divider()
 
 st.write("## Ask GenomeGPT")
 
-user_question = st.chat_input(
-    "Ask about your genomic data..."
-)
+example_questions = ["What mutations are present?","Summarize this genome dataset","Are there disease-associated variants?","Explain this genomic data simply","Which genes appear most important?","Identify clinically relevant SNPs"]
+
+selected_question = st.selectbox("Example Questions",[""] + example_questions)
+
+user_question = st.chat_input("Ask about your genomic data...")
+
+USE EXAMPLE QUESTION
+
+if not user_question and selected_question:user_question = selected_question
 
 # -----------------------------------
 # AI RESPONSE
