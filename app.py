@@ -50,7 +50,7 @@ with st.sidebar:
     )
 
     st.info(
-        "Enter your OpenAI API key above.\n\n"
+        
         "Get a key here:\n"
         "https://platform.openai.com/account/api-keys"
     )
