@@ -26,17 +26,33 @@ st.info(
 
 st.sidebar.title("Settings")
 
-demo_mode = st.sidebar.toggle(
-    "Demo Mode",
-    value=True
+# Default = demo mode ON
+demo_mode = True
+
+# Secret admin password
+admin_password = st.sidebar.text_input(
+    "Admin Password",
+    type="password"
 )
 
-# Optional real AI mode
-if not demo_mode:
+# Only YOU know this password
+if admin_password == st.secrets["DNK26"]:
 
-    api_key = st.secrets["OPENAI_API_KEY"]
+    st.sidebar.success("Admin Access Enabled")
 
-    client = OpenAI(api_key=api_key)
+    demo_mode = st.sidebar.toggle(
+        "Disable Demo Mode",
+        value=True
+    )
+
+    # If toggle OFF -> real AI enabled
+    demo_mode = not demo_mode
+
+else:
+
+    st.sidebar.info(
+        "Public Demo Mode Enabled"
+    )
 
 # -------------------------------
 # FILE UPLOAD
