@@ -15,7 +15,7 @@ st.subheader("AI-Powered Genomic Research Assistant")
 
 uploaded_file = st.file_uploader(
     "Upload a genome dataset",
-    type=["csv", "fasta", "fa"]
+    type=["csv", "fasta", "fa", "txt"]
 )
 
 # -------------------------------
