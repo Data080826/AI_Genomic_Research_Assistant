@@ -2,12 +2,11 @@ import streamlit as st
 import pandas as pd
 from Bio import SeqIO
 from openai import OpenAI
-from dotenv import load_dotenv
 import os
 
-load_dotenv()
-
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = OpenAI(
+    api_key=st.secrets["OPENAI_API_KEY"]
+)
 
 st.set_page_config(page_title="GenomeGPT", layout="wide")
 
