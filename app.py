@@ -127,7 +127,7 @@ with st.sidebar:
     # ADMIN CONTROLS
     # -----------------------------------
 
-     if st.session_state.admin_authenticated:
+    if st.session_state.admin_authenticated:
 
         st.success("✅ Admin Mode Enabled")
 
@@ -340,17 +340,20 @@ Question analyzed:
     # -----------------------------------
     # REAL AI MODE
     # -----------------------------------
+    # -----------------------------------
+    # REAL AI MODE
+    # -----------------------------------
 
     else:
 
-    # REQUIRE FILE
-    if not uploaded_file:
+        # REQUIRE FILE
+        if not uploaded_file:
 
-        st.warning(
-            "Please upload a genomic dataset first."
-        )
+            st.warning(
+                "Please upload a genomic dataset first."
+            )
 
-    else:
+        else:
 
             prompt = f"""
 You are GenomeGPT, an expert AI genomic research assistant.
@@ -408,7 +411,6 @@ Instructions:
                 st.error(
                     f"OpenAI API Error: {e}"
                 )
-
 # -----------------------------------
 # FOOTER
 # -----------------------------------
