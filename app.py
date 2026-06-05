@@ -275,16 +275,37 @@ if uploaded_file:
 
     st.divider()
 
-    st.subheader("📚 Literature Search")
+   st.subheader("📚 Literature Search")
 
-    if st.button(
-        "📚 Find Related Literature"
-    ):
+   database = st.selectbox(
+      "Database",
+      [
+        st.subheader("📚 Literature Search")
 
-        papers = literature_search(
-            "BRCA1 breast cancer mutation",
-            max_results=10
-        )
+database = st.selectbox(
+    "Database",
+    [
+        "PubMed",
+        "PubMed Central (PMC)",
+        "Bookshelf",
+        "GeneReviews",
+        "MeSH",
+        "MedGen",
+        "Journals"
+    ]
+)
+
+literature_query = st.text_input(
+    "Search",
+    placeholder="BRCA1 breast cancer mutation"
+)
+      ]
+   )
+
+   literature_query = st.text_input(
+      "Search",
+      placeholder="BRCA1 breast cancer mutation"
+   )
 
         for paper in papers:
 
