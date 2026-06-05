@@ -64,12 +64,3 @@ def literature_search(query, max_results=10):
 
 
 
-papers = literature_search(
-    "BRCA1 breast cancer mutation",
-    max_results=5
-)
-
-df = pd.DataFrame(papers)
-
-print(df[["Title", "Journal", "Year"]])
-
