@@ -268,6 +268,40 @@ if uploaded_file:
         st.error(f"Error reading file: {e}")
 
 # -----------------------------------
+# LITERATURE SEARCH
+# -----------------------------------
+
+if uploaded_file:
+
+    st.divider()
+
+    st.subheader("📚 Literature Search")
+
+    if st.button(
+        "📚 Find Related Literature"
+    ):
+
+        papers = literature_search(
+            "BRCA1 breast cancer mutation",
+            max_results=10
+        )
+
+        for paper in papers:
+
+            st.markdown(
+                f"### {paper['Title']}"
+            )
+
+            st.write(
+                f"Journal: {paper['Journal']}"
+            )
+
+            with st.expander("Abstract"):
+                st.write(
+                    paper["Abstract"]
+                )
+
+# -----------------------------------
 # CHAT SECTION
 # -----------------------------------
 
@@ -417,10 +451,10 @@ Instructions:
 
 st.divider()
 
-st.subheader("📚 PubMed Literature Search")
+st.subheader("📚 Literature Search")
 
 literature_query = st.text_input(
-    "Search PubMed",
+    "Search",
     placeholder="BRCA1 breast cancer mutation"
 )
 
