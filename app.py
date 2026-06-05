@@ -6,7 +6,7 @@ from pubmed_search import (
     search_pubmed,
     fetch_pubmed_details
 )
-
+from pubmed import literature_search
 # -----------------------------------
 # PAGE CONFIG
 # -----------------------------------
@@ -38,94 +38,10 @@ st.subheader("AI-Powered Genomic Research Assistant")
 # SIDEBAR
 # -----------------------------------
 
-with st.expander("Abstract"):
-     st.write(paper["Abstract"])
-
-def summarize_literature(papers, client):
-
-    text = ""
-
-    for paper in papers[:10]:
-        text += f"""
-Title: {paper['Title']}
-
-Abstract:
-{paper['Abstract']}
-
-------------------
-"""
-
-    response = client.chat.completions.create(
-        model="gpt-5",
-        messages=[
-            {
-                "role": "system",
-                "content": """
-                Summarize the literature.
-                Identify:
-                - major findings
-                - recurring themes
-                - limitations
-                - future directions
-                """
-            },
-            {
-                "role": "user",
-                "content": text
-            }
-        ]
-    )
-
-    return response.choices[0].message.content
-
-if st.button("Generate Literature Review"):
-
-    review = summarize_literature(
-        st.session_state.papers,
-        client
-    )
-
-    st.markdown(review)
-
 with st.sidebar:
 
     st.title("GenomeGPT")
-    #-----------------------------------
-    #PubMed
-    #-----------------------------------
-    st.sidebar.header("Literature Search")
-
-    literature_query = st.sidebar.text_input(
-    "Search PubMed"
-    )
-
-    if st.sidebar.button("Search Literature"):
-
-        papers = literature_search(
-            literature_query,
-            max_results=10
-        )
-
-        st.session_state.papers = papers
-
-    if "papers" in st.session_state:
-
-        st.subheader("PubMed Results")
-
-    for paper in st.session_state.papers:
-
-        st.markdown(
-            f"### {paper['Title']}"
-        )
-
-        st.write(
-            f"Journal: {paper['Journal']}"
-        )
-
-        st.write(
-            f"PMID: {paper['PMID']}"
-        )
-
+  
 
     # -----------------------------------
     # USER API KEY
