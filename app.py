@@ -2,11 +2,8 @@ import streamlit as st
 import pandas as pd
 from Bio import SeqIO
 from openai import OpenAI
-from pubmed_search import (
-    search_pubmed,
-    fetch_pubmed_details
-)
 from pubmed import literature_search
+
 # -----------------------------------
 # PAGE CONFIG
 # -----------------------------------
