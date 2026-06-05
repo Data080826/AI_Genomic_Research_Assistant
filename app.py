@@ -302,32 +302,58 @@ if uploaded_file:
         value=20
     )
 
-    if st.button("Search Literature"):
+   if st.button("Search Literature"):
 
-        if literature_query:
+    if literature_query:
 
-            with st.spinner(f"Searching {database}..."):
+        with st.spinner(f"Searching {database}..."):
 
-                papers = search_ncbi_database(
-                    query=literature_query,
-                    database=database,
-                    max_results=max_results
+            if database == "PubMed":
+                papers = search_pubmed(
+                    literature_query,
+                    max_results
                 )
 
-            st.success(f"Found {len(papers)} results")
+            elif database == "PubMed Central (PMC)":
+                papers = search_pmc(
+                    literature_query,
+                    max_results
+                )
 
-            for paper in papers:
+            elif database == "MeSH":
+                papers = search_mesh(
+                    literature_query,
+                    max_results
+                )
 
-                st.markdown(f"### {paper['Title']}")
+            elif database == "MedGen":
+                papers = search_medgen(
+                    literature_query,
+                    max_results
+                )
 
+            else:
+                papers = []
+
+        st.success(f"Found {len(papers)} results")
+
+        for paper in papers:
+
+            st.markdown(
+                f"### {paper['Title']}"
+            )
+
+            st.write(
+                f"Journal: {paper.get('Journal', 'N/A')}"
+            )
+
+            with st.expander("Abstract"):
                 st.write(
-                    f"Journal/Source: {paper.get('Journal', 'N/A')}"
-                )
-
-                with st.expander("Abstract"):
-                    st.write(
-                        paper.get("Abstract", "No abstract available.")
+                    paper.get(
+                        "Abstract",
+                        "No abstract available."
                     )
+                )
 # -----------------------------------
 # CHAT SECTION
 # -----------------------------------
