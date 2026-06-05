@@ -47,16 +47,6 @@ st.subheader("AI-Powered Genomic Research Assistant")
 # -----------------------------------
 with st.sidebar:
     
-    st.write("---")
-
-    if st.button("📚 Literature Search"):
-        st.session_state.page = "literature"
-
-    if st.button("🧬 Genome Analysis"):
-        st.session_state.page = "genome"
-
-
-
     # -----------------------------------
     # USER API KEY
     # -----------------------------------
@@ -284,6 +274,16 @@ if uploaded_file:
 
         st.error(f"Error reading file: {e}")
 
+#--------------------------------
+# buttons
+#---------------------------------
+st.write("---")
+
+    if st.button("📚 Literature Search"):
+        st.session_state.page = "literature"
+
+    if st.button("🧬 Genome Analysis"):
+        st.session_state.page = "genome"
 # -----------------------------------
 # LITERATURE SEARCH
 # -----------------------------------
