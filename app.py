@@ -210,6 +210,76 @@ with col2:
 st.divider()
 
 # -----------------------------------
+# LITERATURE SEARCH PAGE
+# -----------------------------------
+
+if st.session_state.page == "literature":
+
+    st.subheader("📚 NCBI Literature Search")
+
+    database = st.selectbox(
+        "Database",
+        list(DATABASE_MAP.keys())
+    )
+
+    literature_query = st.text_input(
+        "Search Literature",
+        placeholder="BRCA1 breast cancer mutation"
+    )
+
+    max_results = st.slider(
+        "Maximum Results",
+        5,
+        100,
+        20
+    )
+
+    if st.button(
+        "🔍 Search NCBI",
+        use_container_width=True
+    ):
+
+        if literature_query:
+
+            with st.spinner(
+                f"Searching {database}..."
+            ):
+
+                papers = literature_search(
+                    literature_query,
+                    database=DATABASE_MAP[database],
+                    max_results=max_results
+                )
+
+            st.success(
+                f"Found {len(papers)} results"
+            )
+
+            for paper in papers:
+
+                st.markdown(
+                    f"### {paper['Title']}"
+                )
+
+                st.write(
+                    f"Journal: {paper.get('Journal','N/A')}"
+                )
+
+                st.write(
+                    f"Date: {paper.get('PubDate','N/A')}"
+                )
+
+                if paper.get("Abstract"):
+                    with st.expander(
+                        "Abstract"
+                    ):
+                        st.write(
+                            paper["Abstract"]
+                        )
+
+    st.stop()
+    
+# -----------------------------------
 # FILE UPLOAD
 # -----------------------------------
 
@@ -300,68 +370,7 @@ if uploaded_file:
         st.error(f"Error reading file: {e}")
 
 
-# -----------------------------------
-# LITERATURE SEARCH
-# -----------------------------------
 
-if uploaded_file:
-
-    st.divider()
-
-    st.subheader("📚 Literature Search")
-
-    database = st.selectbox(
-        "Database",
-        [
-            "PubMed",
-            "PubMed Central (PMC)",
-            "Bookshelf",
-            "GeneReviews",
-            "MeSH",
-            "MedGen",
-            "Journals"
-        ]
-    )
-
-    literature_query = st.text_input(
-        "Search",
-        placeholder="BRCA1 breast cancer mutation"
-    )
-
-    max_results = st.slider(
-        "Maximum Results",
-        min_value=5,
-        max_value=100,
-        value=20
-    )
-
-    if st.button("Search Literature"):
-
-        with st.spinner(f"Searching {database}..."):
-
-            papers = literature_search(
-                literature_query,
-                database=DATABASE_MAP[database],
-                max_results=max_results
-            )
-
-        st.success(f"Found {len(papers)} results")
-
-        for paper in papers:
-
-            st.markdown(f"### {paper['Title']}")
-
-            st.write(
-                f"Journal: {paper.get('Journal', 'N/A')}"
-            )
-
-            with st.expander("Abstract"):
-                st.write(
-                    paper.get(
-                        "Abstract",
-                        "No abstract available."
-                    )
-                )
 # -----------------------------------
 # CHAT SECTION
 # -----------------------------------
