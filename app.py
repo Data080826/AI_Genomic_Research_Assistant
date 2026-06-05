@@ -302,23 +302,21 @@ if uploaded_file:
         value=20
     )
 
-if st.button("Search Literature"):
+    if st.button("Search Literature"):
 
-    with st.spinner(f"Searching {database}..."):
+        with st.spinner(f"Searching {database}..."):
 
-        papers = literature_search(
-            literature_query,
-            database=DATABASE_MAP[database],
-            max_results=max_results
-        )
+            papers = literature_search(
+                literature_query,
+                database=DATABASE_MAP[database],
+                max_results=max_results
+            )
 
         st.success(f"Found {len(papers)} results")
 
         for paper in papers:
 
-            st.markdown(
-                f"### {paper['Title']}"
-            )
+            st.markdown(f"### {paper['Title']}")
 
             st.write(
                 f"Journal: {paper.get('Journal', 'N/A')}"
