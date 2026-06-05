@@ -275,41 +275,59 @@ if uploaded_file:
 
     st.divider()
 
-   st.subheader("📚 Literature Search")
+    st.subheader("📚 Literature Search")
 
-   database = st.selectbox(
-      "Database",
-      [
-        "PubMed",
-        "PubMed Central (PMC)",
-        "Bookshelf",
-        "GeneReviews",
-        "MeSH",
-        "MedGen",
-        "Journals"
-      ]
-   )
+    database = st.selectbox(
+        "Database",
+        [
+            "PubMed",
+            "PubMed Central (PMC)",
+            "Bookshelf",
+            "GeneReviews",
+            "MeSH",
+            "MedGen",
+            "Journals"
+        ]
+    )
 
-   literature_query = st.text_input(
-      "Search",
-      placeholder="BRCA1 breast cancer mutation"
-   )
-      
-        for paper in papers:
+    literature_query = st.text_input(
+        "Search",
+        placeholder="BRCA1 breast cancer mutation"
+    )
 
-            st.markdown(
-                f"### {paper['Title']}"
-            )
+    max_results = st.slider(
+        "Maximum Results",
+        min_value=5,
+        max_value=100,
+        value=20
+    )
 
-            st.write(
-                f"Journal: {paper['Journal']}"
-            )
+    if st.button("Search Literature"):
 
-            with st.expander("Abstract"):
-                st.write(
-                    paper["Abstract"]
+        if literature_query:
+
+            with st.spinner(f"Searching {database}..."):
+
+                papers = search_ncbi_database(
+                    query=literature_query,
+                    database=database,
+                    max_results=max_results
                 )
 
+            st.success(f"Found {len(papers)} results")
+
+            for paper in papers:
+
+                st.markdown(f"### {paper['Title']}")
+
+                st.write(
+                    f"Journal/Source: {paper.get('Journal', 'N/A')}"
+                )
+
+                with st.expander("Abstract"):
+                    st.write(
+                        paper.get("Abstract", "No abstract available.")
+                    )
 # -----------------------------------
 # CHAT SECTION
 # -----------------------------------
