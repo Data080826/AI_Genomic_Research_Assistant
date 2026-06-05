@@ -302,7 +302,7 @@ if uploaded_file:
         value=20
     )
 
-   if st.button("Search Literature"):
+    if st.button("Search Literature"):
 
     if literature_query:
 
