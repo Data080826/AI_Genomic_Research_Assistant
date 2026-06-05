@@ -304,37 +304,13 @@ if uploaded_file:
 
 if st.button("Search Literature"):
 
-    if literature_query:
+    with st.spinner(f"Searching {database}..."):
 
-        with st.spinner(f"Searching {database}..."):
-
-            if database == "PubMed":
-                papers = search_ncbi_database(
-                    query=literature_query,
-                    database=database,
-                    max_results=max_results
-                )
-
-            elif database == "PubMed Central (PMC)":
-                papers = search_pmc(
-                    literature_query,
-                    max_results
-                )
-
-            elif database == "MeSH":
-                papers = search_mesh(
-                    literature_query,
-                    max_results
-                )
-
-            elif database == "MedGen":
-                papers = search_medgen(
-                    literature_query,
-                    max_results
-                )
-
-            else:
-                papers = []
+        papers = literature_search(
+            literature_query,
+            database=DATABASE_MAP[database],
+            max_results=max_results
+        )
 
         st.success(f"Found {len(papers)} results")
 
