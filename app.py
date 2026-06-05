@@ -4,6 +4,15 @@ from Bio import SeqIO
 from openai import OpenAI
 from ncbi import literature_search
 
+DATABASE_MAP = {
+    "PubMed": "pubmed",
+    "PubMed Central (PMC)": "pmc",
+    "Bookshelf": "books",
+    "GeneReviews": "gene",
+    "MeSH": "mesh",
+    "MedGen": "medgen",
+    "Journals": "nlmcatalog"
+}
 # -----------------------------------
 # PAGE CONFIG
 # -----------------------------------
