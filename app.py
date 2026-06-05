@@ -129,7 +129,7 @@ with st.sidebar:
 
    if st.session_state.admin_authenticated:
 
-      st.success("✅ Admin Mode Enabled")
+        st.success("✅ Admin Mode Enabled")
 
    if st.button("Logout Admin"):
 
