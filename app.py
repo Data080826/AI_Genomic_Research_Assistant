@@ -22,6 +22,9 @@ if "demo_mode" not in st.session_state:
 
 if "admin_authenticated" not in st.session_state:
     st.session_state.admin_authenticated = False
+    
+if "api_key_active" not in st.session_state:
+    st.session_state.api_key_active = None
 
 # -----------------------------------
 # TITLE
@@ -43,22 +46,65 @@ with st.sidebar:
     # -----------------------------------
 
     st.markdown("""
-    Enter your OpenAI API key  
-    to enable Real AI responses
-    """)
+Enter your OpenAI API key
+to enable Real AI responses
+""")
+
+with st.form("api_key_form"):
 
     user_api_key = st.text_input(
-       "",
-       type="password",
-       placeholder="sk-...",
-       help="Your API key is never stored"
+        "",
+        type="password",
+        placeholder="sk-...",
+        help="Your API key is never stored"
     )
 
-    st.markdown(
-        "[Get your API key from OpenAI Platform](https://platform.openai.com/api-keys)"
+    submitted = st.form_submit_button(
+        "🔑 Activate API Key"
     )
 
-    st.write("---")
+    if submitted:
+
+        if not user_api_key:
+
+            st.warning(
+                "Please enter an API key."
+            )
+
+        else:
+
+            st.session_state.api_key_active = (
+                user_api_key
+            )
+
+            st.success(
+                "API Key Activated"
+            )
+
+if st.session_state.api_key_active:
+
+    st.success(
+        "🟢 OpenAI Connected"
+    )
+
+    if st.button(
+        "❌ Disconnect API Key"
+    ):
+
+        st.session_state.api_key_active = None
+        st.rerun()
+
+else:
+
+    st.info(
+        "🔴 OpenAI Not Connected"
+    )
+
+st.markdown(
+    "[Get your API key from OpenAI Platform](https://platform.openai.com/api-keys)"
+)
+
+st.write("---")
 
     # -----------------------------------
     # HIDDEN ADMIN ACCESS
@@ -124,18 +170,21 @@ with st.sidebar:
 
 client = None
 
-if user_api_key:
+if st.session_state.api_key_active:
 
     try:
 
         client = OpenAI(
-            api_key=user_api_key
+            api_key=(
+                st.session_state.api_key_active
+            )
         )
 
     except Exception as e:
 
-        st.error(f"Invalid API Key: {e}")
-
+        st.error(
+            f"OpenAI Error: {e}"
+        )
 # -----------------------------------
 # STATUS
 # -----------------------------------
@@ -265,7 +314,7 @@ selected_question = st.selectbox(
 )
 
 user_question = st.chat_input(
-    "Ask about your genomic data..."
+    "Ask a question about your uploaded genomic dataset..."
 )
 
 # -----------------------------------
@@ -321,10 +370,10 @@ Question analyzed:
     else:
 
         # REQUIRE API KEY
-        if not user_api_key:
+        if not st.session_state.api_key_active:
 
             st.warning(
-                "Please enter your OpenAI API key in the sidebar."
+                "Please activate your OpenAI API key in the sidebar."
             )
 
         # REQUIRE FILE
