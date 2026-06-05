@@ -5,18 +5,20 @@ import pandas as pd
 Entrez.email = os.getenv("NCBI_EMAIL")
 Entrez.api_key = os.getenv("NCBI_API_KEY")
 
-def search_pubmed(query, max_results=20):
+def search_ncbi_database(query, database, max_results=20):
+
+    db = DATABASE_MAP[database]
+
     handle = Entrez.esearch(
-        db="ncbi",
+        db=db,
         term=query,
-        retmax=max_results,
-        sort="relevance"
+        retmax=max_results
     )
 
-    results = Entrez.read(handle)
+    record = Entrez.read(handle)
     handle.close()
 
-    return results["IdList"]
+    return record["IdList"]
 
 from Bio import Medline
 
