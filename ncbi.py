@@ -7,7 +7,7 @@ Entrez.api_key = os.getenv("NCBI_API_KEY")
 
 def search_pubmed(query, max_results=20):
     handle = Entrez.esearch(
-        db="pubmed",
+        db="ncbi",
         term=query,
         retmax=max_results,
         sort="relevance"
@@ -20,12 +20,12 @@ def search_pubmed(query, max_results=20):
 
 from Bio import Medline
 
-def fetch_pubmed_articles(pmids):
+def fetch_ncbi_articles(pmids):
 
     ids = ",".join(pmids)
 
     handle = Entrez.efetch(
-        db="pubmed",
+        db="ncbi",
         id=ids,
         rettype="medline",
         retmode="text"
@@ -51,15 +51,15 @@ def fetch_pubmed_articles(pmids):
 
 def literature_search(query, max_results=10):
     try:
-        pmids = search_pubmed(query, max_results)
+        pmids = search_ncbi(query, max_results)
 
         if not pmids:
             return []
 
-        return fetch_pubmed_articles(pmids)
+        return fetch_ncbi_articles(pmids)
 
     except Exception as e:
-        print(f"PubMed error: {e}")
+        print(f"NCBI error: {e}")
         return []
 
 
