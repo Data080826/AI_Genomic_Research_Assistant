@@ -17,9 +17,6 @@ st.set_page_config(
 # SESSION STATE
 # -----------------------------------
 
-if "demo_mode" not in st.session_state:
-    st.session_state.demo_mode = True
-
 if "admin_authenticated" not in st.session_state:
     st.session_state.admin_authenticated = False
     
@@ -130,37 +127,16 @@ with st.sidebar:
     # ADMIN CONTROLS
     # -----------------------------------
 
-    if st.session_state.admin_authenticated:
+   if st.session_state.admin_authenticated:
 
-        st.success("✅ Admin Mode Enabled")
+      st.success("✅ Admin Mode Enabled")
 
-        st.write("### AI Controls")
+   if st.button("Logout Admin"):
 
-        st.session_state.demo_mode = st.toggle(
-            "Demo Mode",
-            value=st.session_state.demo_mode
-        )
+        st.session_state.admin_authenticated = False
+        st.rerun()
 
-        col1, col2 = st.columns(2)
-
-        with col1:
-
-            if st.button("Use Demo"):
-                st.session_state.demo_mode = True
-
-        with col2:
-
-            if st.button("Use Real AI"):
-                st.session_state.demo_mode = False
-
-        st.write("---")
-
-        if st.button("Logout Admin"):
-
-            st.session_state.admin_authenticated = False
-            st.rerun()
-
-    else:
+   else:
 
         st.caption("🌐 Public Research Demo")
         
@@ -189,18 +165,17 @@ if st.session_state.api_key_active:
 # STATUS
 # -----------------------------------
 
-if st.session_state.demo_mode:
-
-    st.info(
-        "🧪 Demo Mode Active • AI responses are simulated."
-    )
-
-else:
+if st.session_state.api_key_active:
 
     st.success(
         "🤖 Real AI Mode Active"
     )
 
+else:
+
+    st.info(
+        "🧪 Demo Mode Active • Connect an API key to use Real AI."
+    )
 # -----------------------------------
 # FILE UPLOAD
 # -----------------------------------
@@ -336,7 +311,7 @@ if user_question:
     # DEMO MODE
     # -----------------------------------
 
-    if st.session_state.demo_mode:
+    if not st.session_state.api_key_active:
 
         demo_response = f"""
 🧬 GenomeGPT Demo Analysis
@@ -369,21 +344,14 @@ Question analyzed:
 
     else:
 
-        # REQUIRE API KEY
-        if not st.session_state.api_key_active:
+    # REQUIRE FILE
+    if not uploaded_file:
 
-            st.warning(
-                "Please activate your OpenAI API key in the sidebar."
-            )
+        st.warning(
+            "Please upload a genomic dataset first."
+        )
 
-        # REQUIRE FILE
-        elif not uploaded_file:
-
-            st.warning(
-                "Please upload a genomic dataset first."
-            )
-
-        else:
+    else:
 
             prompt = f"""
 You are GenomeGPT, an expert AI genomic research assistant.
