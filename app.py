@@ -2,12 +2,7 @@ import streamlit as st
 import pandas as pd
 from Bio import SeqIO
 from openai import OpenAI
-from ncbi import (
-    search_ncbi_database,
-    search_pmc,
-    search_mesh,
-    search_medgen
-)
+from ncbi import literature_search
 
 # -----------------------------------
 # PAGE CONFIG
