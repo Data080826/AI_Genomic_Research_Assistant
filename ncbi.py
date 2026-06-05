@@ -65,9 +65,18 @@ def fetch_ncbi_articles(pmids):
 
     return articles
 
-def literature_search(query, max_results=10):
+def literature_search(
+    query,
+    database="PubMed",
+    max_results=10
+):
     try:
-        pmids = search_ncbi(query, max_results)
+
+        pmids = search_ncbi_database(
+            query=query,
+            database=database,
+            max_results=max_results
+        )
 
         if not pmids:
             return []
@@ -77,6 +86,3 @@ def literature_search(query, max_results=10):
     except Exception as e:
         print(f"NCBI error: {e}")
         return []
-
-
-
