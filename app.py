@@ -184,6 +184,31 @@ else:
     st.info(
         "🧪 Demo Mode Active • Connect an API key to use Real AI."
     )
+
+# -----------------------------------
+# TOP NAVIGATION
+# -----------------------------------
+
+st.divider()
+
+col1, col2 = st.columns(2)
+
+with col1:
+    if st.button(
+        "📚 Literature Search",
+        use_container_width=True
+    ):
+        st.session_state.page = "literature"
+
+with col2:
+    if st.button(
+        "🧬 Genome Analysis",
+        use_container_width=True
+    ):
+        st.session_state.page = "genome"
+
+st.divider()
+
 # -----------------------------------
 # FILE UPLOAD
 # -----------------------------------
@@ -274,16 +299,7 @@ if uploaded_file:
 
         st.error(f"Error reading file: {e}")
 
-#--------------------------------
-# buttons
-#---------------------------------
-st.write("---")
 
-    if st.button("📚 Literature Search"):
-        st.session_state.page = "literature"
-
-    if st.button("🧬 Genome Analysis"):
-        st.session_state.page = "genome"
 # -----------------------------------
 # LITERATURE SEARCH
 # -----------------------------------
