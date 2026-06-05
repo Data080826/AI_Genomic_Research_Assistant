@@ -1,6 +1,9 @@
+import os
 from Bio import Entrez
+import pandas as pd
 
-Entrez.email = "dilyarangalimova@gmail.com"
+Entrez.email = os.getenv("NCBI_EMAIL")
+Entrez.api_key = os.getenv("NCBI_API_KEY")
 
 def search_pubmed(query, max_results=20):
     handle = Entrez.esearch(
@@ -39,7 +42,7 @@ def fetch_pubmed_articles(pmids):
             "Journal": record.get("JT", ""),
             "Year": record.get("DP", ""),
             "Authors": record.get("AU", []),
-            "Abstract": record.get("AB", "")
+            "Abstract": record.get("AB", "No abstract available")
         })
 
     handle.close()
@@ -47,19 +50,26 @@ def fetch_pubmed_articles(pmids):
     return articles
 
 def literature_search(query, max_results=10):
+    try:
+        pmids = search_pubmed(query, max_results)
 
-    pmids = search_pubmed(query, max_results)
+        if not pmids:
+            return []
 
-    if not pmids:
+        return fetch_pubmed_articles(pmids)
+
+    except Exception as e:
+        print(f"PubMed error: {e}")
         return []
 
-    return fetch_pubmed_articles(pmids)
+
 
 papers = literature_search(
     "BRCA1 breast cancer mutation",
     max_results=5
 )
 
-for paper in papers:
-    print(paper["Title"])
+df = pd.DataFrame(papers)
+
+print(df[["Title", "Journal", "Year"]])
 
