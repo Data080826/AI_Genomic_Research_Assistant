@@ -2,7 +2,12 @@ import streamlit as st
 import pandas as pd
 from Bio import SeqIO
 from openai import OpenAI
-from ncbi import literature_search
+from ncbi import (
+    search_ncbi_database,
+    search_pmc,
+    search_mesh,
+    search_medgen
+)
 
 # -----------------------------------
 # PAGE CONFIG
@@ -499,58 +504,7 @@ Instructions:
                     f"OpenAI API Error: {e}"
                 )
 
-# -----------------------------------
-# PUBMED SEARCH
-# -----------------------------------
 
-st.divider()
-
-st.subheader("📚 Literature Search")
-
-literature_query = st.text_input(
-    "Search",
-    placeholder="BRCA1 breast cancer mutation"
-)
-
-if st.button("Search Literature"):
-
-    with st.spinner("Searching PubMed..."):
-
-        papers = literature_search(
-            literature_query,
-            max_results=10
-        )
-
-    if papers:
-
-        for paper in papers:
-
-            st.markdown(
-                f"### {paper['Title']}"
-            )
-
-            st.write(
-                f"**Journal:** {paper['Journal']}"
-            )
-
-            st.write(
-                f"**Year:** {paper['Year']}"
-            )
-
-            st.write(
-                f"**PMID:** {paper['PMID']}"
-            )
-
-            with st.expander("Abstract"):
-                st.write(
-                    paper["Abstract"]
-                )
-
-    else:
-
-        st.warning(
-            "No papers found."
-        )
 
 # -----------------------------------
 # FOOTER
