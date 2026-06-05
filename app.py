@@ -280,11 +280,6 @@ if uploaded_file:
    database = st.selectbox(
       "Database",
       [
-        st.subheader("📚 Literature Search")
-
-database = st.selectbox(
-    "Database",
-    [
         "PubMed",
         "PubMed Central (PMC)",
         "Bookshelf",
