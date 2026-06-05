@@ -127,7 +127,7 @@ with st.sidebar:
     # ADMIN CONTROLS
     # -----------------------------------
 
-   if st.session_state.admin_authenticated:
+     if st.session_state.admin_authenticated:
 
         st.success("✅ Admin Mode Enabled")
 
@@ -136,10 +136,9 @@ with st.sidebar:
             st.session_state.admin_authenticated = False
             st.rerun()
 
-   else:
+    else:
 
         st.caption("🌐 Public Research Demo")
-        
 # -----------------------------------
 # OPENAI CLIENT
 # -----------------------------------
