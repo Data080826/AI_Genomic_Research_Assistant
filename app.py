@@ -44,9 +44,17 @@ st.subheader("AI-Powered Genomic Research Assistant")
 # SIDEBAR
 # -----------------------------------
 
-with st.sidebar:
+st.write("---")
 
-    st.title("GenomeGPT")
+if st.button("📚 Literature Search"):
+    st.session_state.page = "literature"
+
+if st.button("🧬 Genome Analysis"):
+    st.session_state.page = "genome"
+
+
+if "page" not in st.session_state:
+    st.session_state.page = "genome"
   
 
     # -----------------------------------
