@@ -37,38 +37,6 @@ st.subheader("AI-Powered Genomic Research Assistant")
 # -----------------------------------
 # SIDEBAR
 # -----------------------------------
-st.sidebar.header("Literature Search")
-
-literature_query = st.sidebar.text_input(
-    "Search PubMed"
-)
-
-if st.sidebar.button("Search Literature"):
-
-    papers = literature_search(
-        literature_query,
-        max_results=10
-    )
-
-    st.session_state.papers = papers
-
-if "papers" in st.session_state:
-
-    st.subheader("PubMed Results")
-
-    for paper in st.session_state.papers:
-
-        st.markdown(
-            f"### {paper['Title']}"
-        )
-
-        st.write(
-            f"Journal: {paper['Journal']}"
-        )
-
-        st.write(
-            f"PMID: {paper['PMID']}"
-        )
 
         with st.expander("Abstract"):
             st.write(paper["Abstract"])
@@ -122,6 +90,42 @@ if st.button("Generate Literature Review"):
 with st.sidebar:
 
     st.title("GenomeGPT")
+    #-----------------------------------
+    #PubMed
+    #-----------------------------------
+    st.sidebar.header("Literature Search")
+
+    literature_query = st.sidebar.text_input(
+    "Search PubMed"
+    )
+
+    if st.sidebar.button("Search Literature"):
+
+        papers = literature_search(
+            literature_query,
+            max_results=10
+        )
+
+        st.session_state.papers = papers
+
+    if "papers" in st.session_state:
+
+    st.subheader("PubMed Results")
+
+    for paper in st.session_state.papers:
+
+        st.markdown(
+            f"### {paper['Title']}"
+        )
+
+        st.write(
+            f"Journal: {paper['Journal']}"
+        )
+
+        st.write(
+            f"PMID: {paper['PMID']}"
+        )
+
 
     # -----------------------------------
     # USER API KEY
