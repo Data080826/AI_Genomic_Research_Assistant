@@ -38,8 +38,8 @@ st.subheader("AI-Powered Genomic Research Assistant")
 # SIDEBAR
 # -----------------------------------
 
-        with st.expander("Abstract"):
-            st.write(paper["Abstract"])
+with st.expander("Abstract"):
+     st.write(paper["Abstract"])
 
 def summarize_literature(papers, client):
 
