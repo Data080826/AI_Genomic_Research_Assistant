@@ -309,10 +309,11 @@ if uploaded_file:
         with st.spinner(f"Searching {database}..."):
 
             if database == "PubMed":
-                papers = search_pubmed(
-                    literature_query,
-                    max_results
-                )
+               papers = search_ncbi_database(
+                    query=literature_query,
+                    database=database,
+                    max_results=max_results
+               )
 
             elif database == "PubMed Central (PMC)":
                 papers = search_pmc(
