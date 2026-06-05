@@ -131,10 +131,10 @@ with st.sidebar:
 
         st.success("✅ Admin Mode Enabled")
 
-   if st.button("Logout Admin"):
+        if st.button("Logout Admin"):
 
-        st.session_state.admin_authenticated = False
-        st.rerun()
+            st.session_state.admin_authenticated = False
+            st.rerun()
 
    else:
 
