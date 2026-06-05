@@ -33,7 +33,8 @@ if "admin_authenticated" not in st.session_state:
 if "api_key_active" not in st.session_state:
     st.session_state.api_key_active = None
 
-
+if "page" not in st.session_state:
+    st.session_state.page = "genome"
 # -----------------------------------
 # TITLE
 # -----------------------------------
@@ -44,7 +45,8 @@ st.subheader("AI-Powered Genomic Research Assistant")
 # -----------------------------------
 # SIDEBAR
 # -----------------------------------
-
+with st.sidebar:
+    
 st.write("---")
 
 if st.button("📚 Literature Search"):
@@ -54,8 +56,6 @@ if st.button("🧬 Genome Analysis"):
     st.session_state.page = "genome"
 
 
-
-  
 
     # -----------------------------------
     # USER API KEY
