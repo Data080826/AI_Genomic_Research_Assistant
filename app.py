@@ -46,65 +46,65 @@ with st.sidebar:
     # -----------------------------------
 
     st.markdown("""
-Enter your OpenAI API key
-to enable Real AI responses
-""")
+    Enter your OpenAI API key
+    to enable Real AI responses
+    """)
 
-with st.form("api_key_form"):
+    with st.form("api_key_form"):
 
-    user_api_key = st.text_input(
-        "",
-        type="password",
-        placeholder="sk-...",
-        help="Your API key is never stored"
+        user_api_key = st.text_input(
+            "",
+            type="password",
+            placeholder="sk-...",
+            help="Your API key is never stored"
+        )
+
+        submitted = st.form_submit_button(
+            "🔑 Activate API Key"
+        )
+
+        if submitted:
+
+            if not user_api_key:
+
+                st.warning(
+                    "Please enter an API key."
+                )
+
+            else:
+
+                st.session_state.api_key_active = (
+                    user_api_key
+                )
+
+                st.success(
+                    "API Key Activated"
+                )
+
+    if st.session_state.api_key_active:
+
+        st.success(
+            "🟢 OpenAI Connected"
+        )
+
+        if st.button(
+            "❌ Disconnect API Key"
+        ):
+
+            st.session_state.api_key_active = None
+            st.rerun()
+
+    else:
+
+        st.info(
+            "🔴 OpenAI Not Connected"
+        )
+
+    st.markdown(
+        "[Get your API key from OpenAI Platform](https://platform.openai.com/api-keys)"
     )
 
-    submitted = st.form_submit_button(
-        "🔑 Activate API Key"
-    )
-
-    if submitted:
-
-        if not user_api_key:
-
-            st.warning(
-                "Please enter an API key."
-            )
-
-        else:
-
-            st.session_state.api_key_active = (
-                user_api_key
-            )
-
-            st.success(
-                "API Key Activated"
-            )
-
-if st.session_state.api_key_active:
-
-    st.success(
-        "🟢 OpenAI Connected"
-    )
-
-    if st.button(
-        "❌ Disconnect API Key"
-    ):
-
-        st.session_state.api_key_active = None
-        st.rerun()
-
-else:
-
-    st.info(
-        "🔴 OpenAI Not Connected"
-    )
-
-st.markdown(
-    "[Get your API key from OpenAI Platform](https://platform.openai.com/api-keys)"
-)
-
-st.write("---")
+    st.write("---")
 
     # -----------------------------------
     # HIDDEN ADMIN ACCESS
@@ -163,7 +163,7 @@ st.write("---")
     else:
 
         st.caption("🌐 Public Research Demo")
-
+        
 # -----------------------------------
 # OPENAI CLIENT
 # -----------------------------------
