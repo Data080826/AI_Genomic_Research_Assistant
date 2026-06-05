@@ -33,6 +33,9 @@ if "admin_authenticated" not in st.session_state:
 if "api_key_active" not in st.session_state:
     st.session_state.api_key_active = None
 
+if "page" not in st.session_state:
+    st.session_state.page = "genome"
+
 # -----------------------------------
 # TITLE
 # -----------------------------------
@@ -53,8 +56,7 @@ if st.button("🧬 Genome Analysis"):
     st.session_state.page = "genome"
 
 
-if "page" not in st.session_state:
-    st.session_state.page = "genome"
+
   
 
     # -----------------------------------
