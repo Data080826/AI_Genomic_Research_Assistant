@@ -287,13 +287,6 @@ if uploaded_file:
         "MeSH",
         "MedGen",
         "Journals"
-    ]
-)
-
-literature_query = st.text_input(
-    "Search",
-    placeholder="BRCA1 breast cancer mutation"
-)
       ]
    )
 
@@ -301,7 +294,7 @@ literature_query = st.text_input(
       "Search",
       placeholder="BRCA1 breast cancer mutation"
    )
-
+      
         for paper in papers:
 
             st.markdown(
