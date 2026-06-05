@@ -110,7 +110,7 @@ with st.sidebar:
 
     if "papers" in st.session_state:
 
-    st.subheader("PubMed Results")
+        st.subheader("PubMed Results")
 
     for paper in st.session_state.papers:
 
