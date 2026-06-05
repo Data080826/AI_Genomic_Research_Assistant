@@ -342,9 +342,6 @@ Question analyzed:
     # -----------------------------------
     # REAL AI MODE
     # -----------------------------------
-    # -----------------------------------
-    # REAL AI MODE
-    # -----------------------------------
 
     else:
 
@@ -413,6 +410,60 @@ Instructions:
                 st.error(
                     f"OpenAI API Error: {e}"
                 )
+
+# -----------------------------------
+# PUBMED SEARCH
+# -----------------------------------
+
+st.divider()
+
+st.subheader("📚 PubMed Literature Search")
+
+literature_query = st.text_input(
+    "Search PubMed",
+    placeholder="BRCA1 breast cancer mutation"
+)
+
+if st.button("Search Literature"):
+
+    with st.spinner("Searching PubMed..."):
+
+        papers = literature_search(
+            literature_query,
+            max_results=10
+        )
+
+    if papers:
+
+        for paper in papers:
+
+            st.markdown(
+                f"### {paper['Title']}"
+            )
+
+            st.write(
+                f"**Journal:** {paper['Journal']}"
+            )
+
+            st.write(
+                f"**Year:** {paper['Year']}"
+            )
+
+            st.write(
+                f"**PMID:** {paper['PMID']}"
+            )
+
+            with st.expander("Abstract"):
+                st.write(
+                    paper["Abstract"]
+                )
+
+    else:
+
+        st.warning(
+            "No papers found."
+        )
+
 # -----------------------------------
 # FOOTER
 # -----------------------------------
