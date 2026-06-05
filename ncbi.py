@@ -5,6 +5,20 @@ import pandas as pd
 Entrez.email = os.getenv("NCBI_EMAIL")
 Entrez.api_key = os.getenv("NCBI_API_KEY")
 
+# -----------------------------------
+# DATABASE MAP
+# -----------------------------------
+
+DATABASE_MAP = {
+    "PubMed": "pubmed",
+    "PubMed Central (PMC)": "pmc",
+    "Bookshelf": "books",
+    "GeneReviews": "gene",
+    "MeSH": "mesh",
+    "MedGen": "medgen",
+    "Journals": "nlmcatalog"
+}
+
 def search_ncbi_database(query, database, max_results=20):
 
     db = DATABASE_MAP[database]
