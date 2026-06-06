@@ -1,6 +1,5 @@
 import os
 from Bio import Entrez
-import pandas as pd
 
 Entrez.email = os.getenv("NCBI_EMAIL")
 Entrez.api_key = os.getenv("NCBI_API_KEY")
@@ -12,42 +11,50 @@ def literature_search(
     max_results=20
 ):
     """
-    Search any NCBI Entrez literature database.
+    Search any NCBI literature database.
+    Returns normalized results for Streamlit.
     """
 
-    search_handle = Entrez.esearch(
-        db=database,
-        term=query,
-        retmax=max_results
-    )
-
-    search_record = Entrez.read(search_handle)
-    search_handle.close()
-
-    ids = search_record["IdList"]
-
-    if not ids:
-        return []
-
-    summary_handle = Entrez.esummary(
-        db=database,
-        id=",".join(ids)
-    )
-
-    summary_record = Entrez.read(summary_handle)
-    summary_handle.close()
-
-    papers = []
-
-    for item in summary_record:
-
-        papers.append(
-            {
-                "ID": item.get("Id", ""),
-                "Title": item.get("Title", ""),
-                "Journal": item.get("FullJournalName", ""),
-                "PubDate": item.get("PubDate", "")
-            }
+    try:
+        # Search database
+        search_handle = Entrez.esearch(
+            db=database,
+            term=query,
+            retmax=max_results
         )
 
-    return papers
+        search_record = Entrez.read(search_handle)
+        search_handle.close()
+
+        ids = search_record["IdList"]
+
+        if not ids:
+            return []
+
+        # Get summaries
+        summary_handle = Entrez.esummary(
+            db=database,
+            id=",".join(ids)
+        )
+
+        summary_record = Entrez.read(summary_handle)
+        summary_handle.close()
+
+        results = []
+
+        for item in summary_record:
+
+            result = {
+                "ID": str(item.get("Id", "")),
+                "Title": str(item.get("Title", "")),
+                "Journal": str(item.get("FullJournalName", "")),
+                "Date": str(item.get("PubDate", "")),
+            }
+
+            results.append(result)
+
+        return results
+
+    except Exception as e:
+        print(f"NCBI Error: {e}")
+        return []
