@@ -251,34 +251,51 @@ if st.session_state.page == "literature":
                     max_results=max_results
                 )
 
-            st.success(
-                f"Found {len(papers)} results"
-            )
+            if papers:
 
-            for paper in papers:
-
-                st.markdown(
-                    f"### {paper['Title']}"
+                st.success(
+                    f"Found {len(papers)} results"
                 )
 
-                st.write(
-                    f"Journal: {paper.get('Journal','N/A')}"
-                )
+                st.subheader("References")
 
-                st.write(
-                    f"Date: {paper.get('PubDate','N/A')}"
-                )
+                for paper in papers:
 
-                if paper.get("Abstract"):
-                    with st.expander(
-                        "Abstract"
-                    ):
+                    st.markdown(
+                        f"### {paper.get('Title', 'No Title')}"
+                    )
+
+                    if paper.get("Journal"):
                         st.write(
-                            paper["Abstract"]
+                            f"**Journal:** {paper['Journal']}"
                         )
 
+                    if paper.get("Date"):
+                        st.write(
+                            f"**Date:** {paper['Date']}"
+                        )
+
+                    if paper.get("ID"):
+                        st.write(
+                            f"**ID:** {paper['ID']}"
+                        )
+
+                    if paper.get("Abstract"):
+                        with st.expander(
+                            "Abstract"
+                        ):
+                            st.write(
+                                paper["Abstract"]
+                            )
+
+                    st.divider()
+
+            else:
+                st.warning(
+                    "No results found."
+                )
+
     st.stop()
-    
 # -----------------------------------
 # FILE UPLOAD
 # -----------------------------------
