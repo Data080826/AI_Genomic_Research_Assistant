@@ -47,7 +47,7 @@ st.subheader("AI-Powered Genomic Research Assistant")
 # -----------------------------------
 with st.sidebar:
     
-    # -----------------------------------
+     # -----------------------------------
     # USER API KEY
     # -----------------------------------
 
@@ -79,13 +79,28 @@ with st.sidebar:
 
             else:
 
-                st.session_state.api_key_active = (
-                    user_api_key
-                )
+                try:
 
-                st.success(
-                    "API Key Activated"
-                )
+                    client = OpenAI(
+                        api_key=user_api_key
+                    )
+
+                    # Verify key
+                    client.models.list()
+
+                    st.session_state.api_key_active = (
+                        user_api_key
+                    )
+
+                    st.success(
+                        "✅ API Key Verified"
+                    )
+
+                except Exception as e:
+
+                    st.error(
+                        f"❌ Invalid API key: {str(e)}"
+                    )
 
     if st.session_state.api_key_active:
 
@@ -111,6 +126,7 @@ with st.sidebar:
     )
 
     st.write("---")
+    
 
     # -----------------------------------
     # HIDDEN ADMIN ACCESS
